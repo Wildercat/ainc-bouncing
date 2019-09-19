@@ -130,7 +130,8 @@ EvilCircle.prototype.setControls = function () {
 }
 
 EvilCircle.prototype.collisionDetect = function () {
-    for (var j = 0; j < balls.length; j++) {\
+    for (var j = 0; j < balls.length; j++) {
+    \
         //if (!(this === balls[j])) {
         if (this.exists) {
             var dx = this.x - balls[j].x;
@@ -181,6 +182,11 @@ while (balls.length < 25) {
     balls.push(ball);
 }
 
+var player = new EvilCircle(
+    random(0 + size, width - size),
+    random(0 + size, height - size),
+    
+)
 // define loop that keeps drawing the scene constantly
 
 function loop() {
