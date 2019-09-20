@@ -39,9 +39,9 @@ Object.defineProperty(Ball.prototype, 'constructor', {
 });
 
 // define EvilCircle constructor, sub-class of Shape
-function EvilCircle(x, y, velX, velY, exists) {
+function EvilCircle(x, y, exists) {
     Shape.call(this, x, y, 20, 20, exists);
-    this.color = white;
+    this.color = "white";
     this.size = 10;
     this.prototype = Object.create(Shape.prototype);
 }
@@ -92,7 +92,7 @@ Ball.prototype.update = function () {
     this.y += this.velY;
 };
 
-EvilCircle.prototype.update = function () {
+EvilCircle.prototype.checkBounds = function () {
     if ((this.x + this.size) >= width) {
         // this.velX = -(this.velX);
         this.x -= this.size;
@@ -131,9 +131,8 @@ EvilCircle.prototype.setControls = function () {
 
 EvilCircle.prototype.collisionDetect = function () {
     for (var j = 0; j < balls.length; j++) {
-    \
         //if (!(this === balls[j])) {
-        if (this.exists) {
+        if (balls[j].exists) {
             var dx = this.x - balls[j].x;
             var dy = this.y - balls[j].y;
             var distance = Math.sqrt(dx * dx + dy * dy);
@@ -141,6 +140,7 @@ EvilCircle.prototype.collisionDetect = function () {
             if (distance < this.size + balls[j].size) {
                 // balls[j].color = this.color = 'rgb(' + random(0, 255) + ',' + random(0, 255) + ',' + random(0, 255) + ')';
                 balls[j].exists = false;
+                score--;
             }
         }
     }
@@ -165,6 +165,7 @@ Ball.prototype.collisionDetect = function () {
 // define array to store balls and populate it
 
 var balls = [];
+var score = 0;
 
 while (balls.length < 25) {
     var size = random(10, 20);
@@ -176,17 +177,24 @@ while (balls.length < 25) {
         random(-7, 7),
         random(-7, 7),
         true,
-        'rgb(' + random(0, 255) + ',' + random(0, 255) + ',' + random(0, 255) + ')',
+        'rgb(' + random(15, 255) + ',' + random(15, 255) + ',' + random(15, 255) + ')',
         size
     );
     balls.push(ball);
+    score++;
 }
 
 var player = new EvilCircle(
     random(0 + size, width - size),
     random(0 + size, height - size),
-    
+    true
 )
+
+player.setControls();
+
+// get <p> for displaying score
+var scoreDisplay = document.querySelector('p');
+
 // define loop that keeps drawing the scene constantly
 
 function loop() {
@@ -194,9 +202,20 @@ function loop() {
     ctx.fillRect(0, 0, width, height);
 
     for (var i = 0; i < balls.length; i++) {
-        balls[i].draw();
-        balls[i].update();
-        balls[i].collisionDetect();
+        if (balls[i].exists) {
+            balls[i].draw();
+            balls[i].update();
+            balls[i].collisionDetect();
+        }
+    }
+    player.draw();
+    player.checkBounds();
+    player.collisionDetect();
+
+    scoreDisplay.innerHTML = score;
+
+    if (score == 0) {
+        scoreDisplay.innerHTMl = 'YOU WIN!'
     }
 
     requestAnimationFrame(loop);
